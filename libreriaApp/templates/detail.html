@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ libro.titulo }}</title>
+</head>
+<body>
+    <h1>{{ libro.titulo }}</h1>
+    <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
+    <p>Editorial: {{ libro.editorial.nombre }}</p>
+    <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
+    <p>Género: {{ libro.genero }}</p>
+    <p>ISBN: {{ libro.isbn }}</p>
+    <p>Resumen: {{ libro.resumen }}</p>
+    <p>Disponibilidad: {{ libro.disponibilidad }}</p>
+    {% if libro.portada %}
+    <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
+    {% else %}
+        <p>No hay portada disponible.</p>
+    {% endif %}
+</body>
+</html>

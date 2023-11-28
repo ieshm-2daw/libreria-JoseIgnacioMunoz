@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+</head>
+<body>
+    <h1>Listado de Libros</h1>
+    <ul>
+        {% for libro in libro_list %}
+            <li><a href="{% url 'detail' pk=libro.pk %}">{{ libro.titulo }}</a></li>
+            <a href="{% url 'update' pk=libro.pk %}"><button>Editar</button></a>
+            <a href="{% url 'delete' pk=libro.pk %}"><button>Eliminar</button></a>
+        {% endfor %}
+    </ul>
+
+    <p><a href="{% url 'new' %}"><button>Nuevo libro</button></a></p>
+
+</body>
+</html>
