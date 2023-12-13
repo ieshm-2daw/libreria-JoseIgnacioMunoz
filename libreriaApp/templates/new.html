@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Añadir Libro</h1>
-    <form method="post" action="{% url 'new' %}">
+    <form method="post" action="{% url 'new' %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Guardar</button>

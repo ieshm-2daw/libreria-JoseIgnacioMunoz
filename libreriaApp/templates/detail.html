@@ -17,7 +17,10 @@
     {% if libro.portada %}
     <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
     {% else %}
-        <p>No hay portada disponible.</p>
+        <p>Sin portada</p>
     {% endif %}
+    <button><a href="{% url 'prestar' pk=libro.pk%}">Realizar préstamo</a></button>
+    <button><a href="{% url 'devolver' pk=libro.pk%}">Realizar devolución</a></button>
+
 </body>
 </html>

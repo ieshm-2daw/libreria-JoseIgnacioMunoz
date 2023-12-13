@@ -14,7 +14,7 @@
             <a href="{% url 'delete' pk=libro.pk %}"><button>Eliminar</button></a>
         {% endfor %}
     </ul>
-
+    <a href="{% url 'prestamosUsuario' %}"><button>Mis libros</button></a>
     <p><a href="{% url 'new' %}"><button>Nuevo libro</button></a></p>
 
 </body>

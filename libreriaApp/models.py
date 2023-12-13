@@ -8,15 +8,24 @@ class Usuario(AbstractUser):
     direccion = models.CharField(max_length=255)
     telefono = models.CharField(max_length=15)
 
+    def __str__(self):
+        return self.dni
+
 class Autor(models.Model):
     nombre = models.CharField(max_length=100)
     biografia = models.TextField()
     foto = models.ImageField(upload_to='autores/')
 
+    def __str__(self):
+        return self.nombre
+
 class Editorial(models.Model):
     nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
     sitio_web = models.URLField()
+
+    def __str__(self):
+        return self.nombre
 
 class Libro(models.Model):
     DISPONIBILIDAD_CHOICES = [
@@ -34,6 +43,9 @@ class Libro(models.Model):
     disponibilidad = models.CharField(max_length=20, choices=DISPONIBILIDAD_CHOICES, default='disponible')
     portada = models.ImageField(upload_to='portadas/', null=True, blank=True)
 
+    def __str__(self):
+        return self.titulo
+
 class Prestamo(models.Model):
     ESTADO_CHOICES = [
         ('prestado', 'Prestado'),
@@ -45,3 +57,6 @@ class Prestamo(models.Model):
     fecha_devolucion = models.DateField(null=True, blank=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='prestado')
+
+    def __str__(self):
+        return "Prestamo del libro " + self.libro_prestado.titulo + " a " + self.usuario.username
