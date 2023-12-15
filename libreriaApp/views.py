@@ -51,8 +51,8 @@ class LibroListView(ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         #son como los context_object_name 
         context = super().get_context_data(**kwargs)
-        context['libros_disponibles'] = Libro.objects.filter(disponibilidad = 'disponible')
-        context['libros_prestados'] = Libro.objects.filter(disponibilidad = 'prestado')
+        context['disponibles'] = Libro.objects.filter(disponibilidad = 'disponible')
+        context['prestados'] = Libro.objects.filter(disponibilidad = 'prestado')
 
         return context
 
@@ -70,13 +70,13 @@ class CrearPrestamoView(View):
 
     def get(self, request, pk):
         libro = get_object_or_404(Libro, pk=pk)
-        return render(request, self.template_name, {'libroPrestado': libro})
+        return render(request, self.template_name, {'libro': libro})
 
     def post(self, request, pk):
         usuario = request.user
         libro = get_object_or_404(Libro, pk=pk)
         fecha_prestamo = date.today()
-        fecha_devolucion=fecha_prestamo+timedelta(days=30)
+        fecha_devolucion=fecha_prestamo+timedelta(days=5) # HE PUESTO 5 PARA COMPROBAR QUE FUNCIONA LA VISTA DE PRESTAMOS QUE EXPIRAN PRONTO (EN MENOS DE 5 DIAS)
 
         prestamo = Prestamo.objects.create(libro_prestado=libro, fecha_prestamo=fecha_prestamo, fecha_devolucion=fecha_devolucion, usuario=usuario, estado="prestado")
         prestamo.save()
@@ -91,12 +91,12 @@ class DevolucionView(View):
 
     def get(self, request, pk):
         libro = get_object_or_404(Libro, pk=pk)
-        return render(request, self.template_name, {'libroDevuelto': libro})
+        return render(request, self.template_name, {'libro': libro})
 
     def post(self, request, pk):
         usuario = request.user
         libro = get_object_or_404(Libro, pk=pk)
-        prestamo = get_object_or_404(Prestamo, libro_prestado=libro, usuario=usuario, estado='prestado')
+        prestamo = Prestamo.objects.filter(libro_prestado=libro, usuario=usuario, estado='prestado').first()
         fecha_prestamo = prestamo.fecha_prestamo
         fecha_devolucion=date.today()
 
@@ -125,13 +125,12 @@ class ListPrestamoUsuarioView(ListView):
     
 class PrestamosExpiranPronto(ListView):
     model = Prestamo
-    template_name = 'prestamos_expiran_pronto.html'
-    prestamo = get_object_or_404(Prestamo, estado='prestado')
+    template_name = 'expiran_pronto.html'
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         fecha_limite = date.today() + timedelta(days=5)
         context = super().get_context_data(**kwargs) 
         context['expiranPronto'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lte=fecha_limite)
-
+        #__lte: https://stackoverflow.com/questions/4668619/how-do-i-filter-query-objects-by-date-range-in-django
         return context
     

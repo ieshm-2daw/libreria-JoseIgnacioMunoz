@@ -1,21 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List</title>
-</head>
-<body>
-    <h1>Listado de Libros</h1>
-    <ul>
-        {% for libro in libro_list %}
-            <li><a href="{% url 'detail' pk=libro.pk %}">{{ libro.titulo }}</a></li>
-            <a href="{% url 'update' pk=libro.pk %}"><button>Editar</button></a>
-            <a href="{% url 'delete' pk=libro.pk %}"><button>Eliminar</button></a>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'prestamosUsuario' %}"><button>Mis libros</button></a>
-    <p><a href="{% url 'new' %}"><button>Nuevo libro</button></a></p>
+{% extends 'base.html' %}
+{% block title %} <title>Lista de libros</title> {% endblock %}
 
-</body>
-</html>
+{% block content %}
+    <article>
+        <h1>Listado de Libros</h1>
+        <h2>Libros disponibles</h2>
+        <br>
+        <ul>
+            {% for libro in disponibles %}
+                <li><a href="{% url 'detail' pk=libro.pk %}">{{ libro.titulo }}</a></li>
+                {% if libro.portada %}
+                <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
+                {% else %}
+                    <p>Sin portada</p>
+                {% endif %}
+                <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
+                <p>Editorial: {{ libro.editorial.nombre }}</p>
+                <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
+                <p>Género: {{ libro.genero }}</p>
+                <p>ISBN: {{ libro.isbn }}</p>
+                <p>Resumen: {{ libro.resumen }}</p>
+                <p>Disponibilidad: {{ libro.disponibilidad }}</p>
+            {% endfor %}
+        </ul>
+        <h2>Libros prestados</h2>
+        <br>
+        <ul>
+            {% for libro in prestados %}
+                <li><a href="{% url 'detail' pk=libro.pk %}">{{ libro.titulo }}</a></li>
+                {% if libro.portada %}
+                <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
+                {% else %}
+                    <p>Sin portada</p>
+                {% endif %}
+                <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
+                <p>Editorial: {{ libro.editorial.nombre }}</p>
+                <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
+                <p>Género: {{ libro.genero }}</p>
+                <p>ISBN: {{ libro.isbn }}</p>
+                <p>Resumen: {{ libro.resumen }}</p>
+                <p>Disponibilidad: {{ libro.disponibilidad }}</p>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'prestamosUsuario' %}"><button>Mis libros</button></a>
+        <p><a href="{% url 'new' %}"><button>Nuevo libro</button></a></p>
+    </article>
+
+{% endblock %}

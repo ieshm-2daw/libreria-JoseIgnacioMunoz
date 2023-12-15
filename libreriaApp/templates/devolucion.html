@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar devolución</title>
-</head>
-<body>
-    <h1>{{ libro.titulo }}</h1>
+{% extends 'base.html' %}
+{% block title %} <title>Devolver libro</title> {% endblock %}
+
+{% block content %}
+    <h1>Devolución de {{ libro.titulo }}</h1>
     <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
     <p>Editorial: {{ libro.editorial.nombre }}</p>
     <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
@@ -15,5 +11,5 @@
     <form method="post">
         {% csrf_token %}
         <a href="{% url 'list' %}"><button type="submit">Confirmar devolución</button></a>
-    </form></body>
-</html>
+    </form>
+{% endblock %}

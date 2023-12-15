@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ libro.titulo }}</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}<title>Detalles de {{ libro.titulo }}</title>{% endblock %}
+
+{% block content %}
     <h1>{{ libro.titulo }}</h1>
+    {% if libro.portada %}
+        <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
+    {% else %}
+        <p>Sin portada</p>
+    {% endif %}
     <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
     <p>Editorial: {{ libro.editorial.nombre }}</p>
     <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
@@ -14,13 +15,13 @@
     <p>ISBN: {{ libro.isbn }}</p>
     <p>Resumen: {{ libro.resumen }}</p>
     <p>Disponibilidad: {{ libro.disponibilidad }}</p>
-    {% if libro.portada %}
-    <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
-    {% else %}
-        <p>Sin portada</p>
-    {% endif %}
-    <button><a href="{% url 'prestar' pk=libro.pk%}">Realizar préstamo</a></button>
-    <button><a href="{% url 'devolver' pk=libro.pk%}">Realizar devolución</a></button>
 
-</body>
-</html>
+    {% if libro.disponibilidad == 'disponible' %}
+        <a href="{% url 'prestar' pk=libro.pk %}"><button>Realizar préstamo</button></a>
+    {% elif libro.disponibilidad == 'prestado' %}
+        <a href="{% url 'devolver' pk=libro.pk %}"><button>Realizar devolución</button></a>
+    {% endif %}
+
+    <a href="{% url 'update' pk=libro.pk %}"><button>Editar</button></a>
+    <a href="{% url 'delete' pk=libro.pk %}"><button>Eliminar</button></a>
+{% endblock %}

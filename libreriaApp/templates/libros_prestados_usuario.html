@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libros prestados por usuario</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %} <title>Mis libros</title> {% endblock %}
+
+{% block content %}
     <h2>Listado de Libros prestados</h2>
     <ul>
         {% for prestado in prestamo_prestado %}
             <p>{{prestado.libro_prestado.titulo}}</p>
-            <button><a href="{% url 'devolver' pk=prestado.libro_prestado.pk %}">Realizar devolución</a></button>
+            <p>Inicio del préstamo: {{prestado.fecha_prestamo}}</p>
+            <p>Fin del préstamo: {{prestado.fecha_devolucion}}</p>
+            <a href="{% url 'devolver' pk=prestado.libro_prestado.pk %}"><button>Realizar devolución</button></a>
         {% endfor %}
     </ul>
     <h2>Listado de Libros devueltos</h2>
@@ -19,5 +17,4 @@
             <p>{{devuelto.libro_prestado.titulo}}</p>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

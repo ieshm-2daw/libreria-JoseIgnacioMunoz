@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar préstamo</title>
-</head>
-<body>
-    <h1>{{ libro.titulo }}</h1>
+{% extends 'base.html' %}
+{% block title %} <title>Prestar libro</title> {% endblock %}
+
+{% block content %}
+    <h1>Préstamo de {{ libro.titulo }}</h1>
+    {% if libro.portada %}
+        <img src="{{ libro.portada.url }}" alt="{{ libro.titulo }} - Portada">
+    {% else %}
+        <p>Sin portada</p>
+    {% endif %}
     <p>Autores: {% for autor in libro.autores.all %}{{ autor.nombre }}, {% endfor %}</p>
     <p>Editorial: {{ libro.editorial.nombre }}</p>
     <p>Fecha de publicación: {{ libro.fecha_publicacion }}</p>
@@ -15,5 +16,5 @@
     <form method="post">
         {% csrf_token %}
         <a href="{% url 'list' %}"><button type="submit">Confirmar préstamo</button></a>
-    </form></body>
-</html>
+    </form>
+{% endblock %}

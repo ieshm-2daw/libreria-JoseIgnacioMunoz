@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %} <title>Editar libro</title> {% endblock %}
+
+{% block content %}
     <h2>Editar libro</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Guardar cambios</button>
     </form>
     <a href="{% url 'list' %}">Volver al listado</a>
-</body>
-</html>
+{% endblock %}
