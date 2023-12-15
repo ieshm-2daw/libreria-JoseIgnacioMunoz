@@ -76,7 +76,7 @@ class CrearPrestamoView(View):
         usuario = request.user
         libro = get_object_or_404(Libro, pk=pk)
         fecha_prestamo = date.today()
-        fecha_devolucion=fecha_prestamo+timedelta(days=5) # HE PUESTO 5 PARA COMPROBAR QUE FUNCIONA LA VISTA DE PRESTAMOS QUE EXPIRAN PRONTO (EN MENOS DE 5 DIAS)
+        fecha_devolucion=fecha_prestamo+timedelta(days=7) # HE PUESTO 7 PARA COMPROBAR QUE FUNCIONA LA VISTA DE PRESTAMOS QUE EXPIRAN PRONTO (EN MENOS DE 5 DIAS)
 
         prestamo = Prestamo.objects.create(libro_prestado=libro, fecha_prestamo=fecha_prestamo, fecha_devolucion=fecha_devolucion, usuario=usuario, estado="prestado")
         prestamo.save()
@@ -113,7 +113,7 @@ class DevolucionView(View):
     
 class ListPrestamoUsuarioView(ListView):
     model = Prestamo
-    template_name = 'libros_prestados_usuario.html'
+    template_name = 'libros_prestados_usuario.html' 
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         #son como los context_object_name 
@@ -123,14 +123,32 @@ class ListPrestamoUsuarioView(ListView):
 
         return context
     
+    #Siguientes dos vistas para panel de control:
 class PrestamosExpiranPronto(ListView):
     model = Prestamo
-    template_name = 'expiran_pronto.html'
+    template_name = 'panel.html'
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        fecha_limite = date.today() + timedelta(days=5)
+        fecha_limite = date.today() + timedelta(days=7)
         context = super().get_context_data(**kwargs) 
         context['expiranPronto'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lte=fecha_limite)
         #__lte: https://stackoverflow.com/questions/4668619/how-do-i-filter-query-objects-by-date-range-in-django
         return context
     
+class PanelView(ListView):
+    model = Libro
+    model = Prestamo
+    template_name = 'panel.html'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        #son como los context_object_name 
+        context = super().get_context_data(**kwargs)
+        context['disponiblesLength'] = len(Libro.objects.filter(disponibilidad = 'disponible'))
+        libros_prestados = Libro.objects.filter(disponibilidad='prestado')
+        context['prestadosLength'] = len(libros_prestados)
+
+        fecha_actual = date.today()
+        context['noDevueltos'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lt=fecha_actual)
+        #context['topLibros'] 
+
+        return context

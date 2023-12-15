@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %} <title>Panel de control</title> {% endblock %}
+
+{% block content %}
+    <p>Nº libros prestados: {{ prestadosLength }}</p>
+    <p>Nº libros disponibles: {{ disponiblesLength }}</p>
+    {% if noDevueltos %}
+        <h2>Libros no devueltos</h2>
+        {% for prestamo in noDevueltos %}
+            <p>El prestamo de {{ prestamo.libro_prestado.titulo }} expiró el {{ prestamo.fecha_devolucion }}</p>
+        {% endfor %}
+    {% else %}
+        <h2>No hay prestamos cuya fecha de devolución se haya excedido</h2>
+    {% endif %}
+
+    {% if expiranPronto %}
+        <h2>Préstamos que expiran en menos de una semana</h2>
+        {% for prestamo in expiranPronto %}
+            <p>{{prestamo.libro_prestado.titulo}}</p>
+            <p>Plazo de entrega hasta: {{ prestamo.fecha_devolucion }}</p>
+        {% endfor %}
+    {% else %}
+        <h2>No hay préstamos que expiren pronto aún!</h2>
+    {% endif %}
+    
+{% endblock %}
