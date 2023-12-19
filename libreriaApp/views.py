@@ -110,7 +110,7 @@ class DevolucionView(View):
         libro.save()
 
         return redirect('list')
-    
+
 class ListPrestamoUsuarioView(ListView):
     model = Prestamo
     template_name = 'libros_prestados_usuario.html' 
@@ -122,8 +122,8 @@ class ListPrestamoUsuarioView(ListView):
         context['prestamo_devuelto'] = Prestamo.objects.filter(estado = 'devuelto', usuario=self.request.user)
 
         return context
-    
-    #Siguientes dos vistas para panel de control:
+"""
+#Siguientes dos vistas para panel de control:
 class PrestamosExpiranPronto(ListView):
     model = Prestamo
     template_name = 'panel.html'
@@ -134,21 +134,42 @@ class PrestamosExpiranPronto(ListView):
         context['expiranPronto'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lte=fecha_limite)
         #__lte: https://stackoverflow.com/questions/4668619/how-do-i-filter-query-objects-by-date-range-in-django
         return context
-    
+"""
 class PanelView(ListView):
     model = Libro
+    template_name = 'panel.html'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        
+        context['disponiblesLength'] = len(Libro.objects.filter(disponibilidad = 'disponible'))
+        context['prestadosLength'] = len(Libro.objects.filter(disponibilidad='prestado'))
+
+        fecha_actual = date.today()
+        context['noDevueltos'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lt=fecha_actual)
+
+        ultimaSemana = fecha_actual + timedelta(days=7)
+        context['expiranPronto'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lte=ultimaSemana, fecha_devolucion__gte=fecha_actual)
+        #__lte: https://stackoverflow.com/questions/4668619/how-do-i-filter-query-objects-by-date-range-in-django
+
+        #context['topLibros'] 
+
+        return context
+        """
+         Aunque model=Libro está configurado a nivel de la clase ListView, se puede trabajar 
+         con otros modelos según las necesidades específicas de cada vista y su lógica.
+        """
+
+"""
+class PanelPrestamoView(ListView):
     model = Prestamo
     template_name = 'panel.html'
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        #son como los context_object_name 
         context = super().get_context_data(**kwargs)
-        context['disponiblesLength'] = len(Libro.objects.filter(disponibilidad = 'disponible'))
-        libros_prestados = Libro.objects.filter(disponibilidad='prestado')
-        context['prestadosLength'] = len(libros_prestados)
 
         fecha_actual = date.today()
         context['noDevueltos'] = Prestamo.objects.filter(estado = 'prestado', fecha_devolucion__lt=fecha_actual)
-        #context['topLibros'] 
 
         return context
+"""

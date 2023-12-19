@@ -16,7 +16,7 @@
     {% if expiranPronto %}
         <h2>Préstamos que expiran en menos de una semana</h2>
         {% for prestamo in expiranPronto %}
-            <p>{{prestamo.libro_prestado.titulo}}</p>
+            <h4>{{prestamo.libro_prestado.titulo}}</h4>
             <p>Plazo de entrega hasta: {{ prestamo.fecha_devolucion }}</p>
         {% endfor %}
     {% else %}

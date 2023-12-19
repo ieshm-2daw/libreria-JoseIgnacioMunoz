@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LibroListView, LibroDetailView, LibroCreateView, LibroUpdateView, LibroDeleteView, CrearPrestamoView, DevolucionView, ListPrestamoUsuarioView, PrestamosExpiranPronto, PanelView
+from .views import LibroListView, LibroDetailView, LibroCreateView, LibroUpdateView, LibroDeleteView, CrearPrestamoView, DevolucionView, ListPrestamoUsuarioView, PanelView
 
 urlpatterns = [
     path('', LibroListView.as_view(), name='list'),
@@ -10,6 +10,5 @@ urlpatterns = [
     path('libros/<int:pk>/prestar/', CrearPrestamoView.as_view(), name='prestar'),
     path('libros/<int:pk>/devolver/', DevolucionView.as_view(), name='devolver'),
     path('libros/prestamosUsuario/', ListPrestamoUsuarioView.as_view(), name='prestamosUsuario'),
-    path('libros/expiran/', PrestamosExpiranPronto.as_view(), name='expiranPronto'),
     path('libros/panel/', PanelView.as_view(), name='panel'),
 ]
