@@ -2,13 +2,15 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Libro, Prestamo
+from .models import Libro, Prestamo, Autor 
 from .forms import LibroForm
 from django.urls import reverse_lazy
 from datetime import date, timedelta
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin 
 
-class LibroCreateView(CreateView):
+
+class LibroCreateView(LoginRequiredMixin, CreateView):
     model = Libro
     template_name = 'new.html'
     success_url = reverse_lazy('list')
@@ -24,7 +26,7 @@ class LibroCreateView(CreateView):
             'portada',
         ]
 
-class LibroUpdateView(UpdateView):
+class LibroUpdateView(LoginRequiredMixin, UpdateView):
     model = Libro
     template_name = 'edit.html'
     success_url = reverse_lazy('list')
@@ -43,29 +45,43 @@ class LibroUpdateView(UpdateView):
 class LibroListView(ListView):
     model = Libro
     template_name = 'list.html'
+    form_class = LibroForm
 
     #Para filtrar los libros disponibles: 
     #queryset = Libro.objects.filter(disponibilidad='disponible')
+    def get_queryset(self):
+        queryset = Libro.objects.all()
+        autor_nombre = self.request.GET.get('autor')
 
+        if autor_nombre:
+            queryset = queryset.filter(autores__nombre__icontains=autor_nombre)
+
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         #son como los context_object_name 
         context = super().get_context_data(**kwargs)
-        context['disponibles'] = Libro.objects.filter(disponibilidad = 'disponible')
-        context['prestados'] = Libro.objects.filter(disponibilidad = 'prestado')
+        context['autor_filter'] = Autor.objects.all()
+        autores_seleccionados = self.request.GET.getlist('autores')
+        print(autores_seleccionados)
+        if autores_seleccionados:
+            context['disponibles'] = Libro.objects.filter(disponibilidad = 'disponible', autores__nombre__in = autores_seleccionados) #lista de autores
+            context['prestados'] = Libro.objects.filter(disponibilidad = 'prestado', autores__nombre__in = autores_seleccionados)
+
 
         return context
 
-class LibroDetailView(DetailView):
+class LibroDetailView(LoginRequiredMixin, DetailView):
     model = Libro
     template_name = 'detail.html'
+    paginate_by = 2
 
-class LibroDeleteView(DeleteView):
+class LibroDeleteView(LoginRequiredMixin, DeleteView):
     model = Libro
     template_name = 'delete.html'
     success_url = reverse_lazy('list')
 
-class CrearPrestamoView(View):
+class CrearPrestamoView(LoginRequiredMixin, View):
     template_name = 'prestamo.html'
 
     def get(self, request, pk):
@@ -86,7 +102,7 @@ class CrearPrestamoView(View):
 
         return redirect('list')
     
-class DevolucionView(View):
+class DevolucionView(LoginRequiredMixin, View):
     template_name = 'devolucion.html'
 
     def get(self, request, pk):
@@ -111,7 +127,7 @@ class DevolucionView(View):
 
         return redirect('list')
 
-class ListPrestamoUsuarioView(ListView):
+class ListPrestamoUsuarioView(LoginRequiredMixin, ListView):
     model = Prestamo
     template_name = 'libros_prestados_usuario.html' 
 
@@ -135,7 +151,7 @@ class PrestamosExpiranPronto(ListView):
         #__lte: https://stackoverflow.com/questions/4668619/how-do-i-filter-query-objects-by-date-range-in-django
         return context
 """
-class PanelView(ListView):
+class PanelView(LoginRequiredMixin, ListView):
     model = Libro
     template_name = 'panel.html'
 

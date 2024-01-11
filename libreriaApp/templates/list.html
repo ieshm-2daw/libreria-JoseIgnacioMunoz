@@ -2,6 +2,17 @@
 {% block title %} <title>Lista de libros</title> {% endblock %}
 
 {% block content %}
+    <form method="get">
+        <label for="autor">Filtrar por Autor:</label>
+        <select name="autores" id="autores" multiple>
+            <option disabled selected>Selecciona una opción</option>
+            {% for autor in autor_filter %}
+                <option value="{{ autor.nombre }}">{{ autor.nombre }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Filtrar</button>
+    </form>
     <article>
         <h1>Listado de Libros</h1>
         <h2>Libros disponibles</h2>
@@ -45,5 +56,17 @@
         <a href="{% url 'prestamosUsuario' %}"><button>Mis libros</button></a>
         <p><a href="{% url 'new' %}"><button>Nuevo libro</button></a></p>
     </article>
+
+    
+    {% if page_obj.has_previous %}
+        <a href="{% url 'list' %}?page={{ page_obj.previous_page_number }}">Ir a la página {{ page_obj.previous_page_number }}</a>
+    {% endif %}
+    La página actual es {{ page_obj.number }}
+    
+    {% if page_obj.has_next %}
+        <a href="{% url 'list' %}?page={{ page_obj.next_page_number }}">Ir a la página {{ page_obj.next_page_number }}</a>
+    {% endif %}
+        
+        
 
 {% endblock %}
