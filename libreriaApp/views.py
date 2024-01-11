@@ -47,27 +47,32 @@ class LibroListView(ListView):
     template_name = 'list.html'
     form_class = LibroForm
 
-    #Para filtrar los libros disponibles: 
-    #queryset = Libro.objects.filter(disponibilidad='disponible')
     def get_queryset(self):
         queryset = Libro.objects.all()
-        autor_nombre = self.request.GET.get('autor')
+        
+        autor_nombre = self.request.GET.get('autores')
+        genero = self.request.GET.get('genero')
 
         if autor_nombre:
             queryset = queryset.filter(autores__nombre__icontains=autor_nombre)
 
+        if genero:
+            queryset = queryset.filter(genero=genero)
+
         return queryset
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        #son como los context_object_name 
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['autor_filter'] = Autor.objects.all()
+        
         autores_seleccionados = self.request.GET.getlist('autores')
-        print(autores_seleccionados)
-        if autores_seleccionados:
-            context['disponibles'] = Libro.objects.filter(disponibilidad = 'disponible', autores__nombre__in = autores_seleccionados) #lista de autores
-            context['prestados'] = Libro.objects.filter(disponibilidad = 'prestado', autores__nombre__in = autores_seleccionados)
+        genero_seleccionado = self.request.GET.get('genero')
 
+        if autores_seleccionados and genero_seleccionado:
+            context['disponibles'] = Libro.objects.filter(disponibilidad='disponible', autores__nombre__in=autores_seleccionados, genero = genero_seleccionado)
+            context['prestados'] = Libro.objects.filter(disponibilidad='prestado', autores__nombre__in=autores_seleccionados, genero = genero_seleccionado)
+
+        context['generos'] = Libro.objects.values_list('genero', flat=True).distinct()
 
         return context
 
